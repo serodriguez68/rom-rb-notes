@@ -1,35 +1,27 @@
-# RubyTapas rom-rb companion scripts
+- Repositary pattern
+  - Interface between apps domain layer: business layer
+  - Persistence layer: interaction with DB
+  
+  
+- Materialize the relation  `to_a`
 
-These scripts accompany my 3-part [RubyTapas][rubytapas] series on [rom-rb][rom-rb]:
 
-1. [Getting started with rom-rb][ep1] — [episode_1.rb][ep1_script]
-2. [Writing changes with rom-rb][ep2] — [episode_2.rb][ep2_script]
-3. [Building queries with rom-rb][ep3] — [episode_3.rb][ep3_script]
+- Repository: Acts as an interface to working with `Articles` 
+  - Methods in a repository return relation instances
+  - relations can be chained and composed, but are not objects.
+  - Once we finish the chaining of relations, we need to `materialize` the relation using `to_a`.  Materializing
+  converts the Relation into `Structs`. Simple value objects that represent each record in the database that only contain
+  the data the need.
+    - This eliminates N+1 problems by design, since there is no way view can keep querying the db.
+- Relations: Repositories work with one or more relations. Each relation is in charge of interaction with the DB.
+each relation in charge of one DB table and stores the detailed query logic.
 
-[rubytapas]: https://www.rubytapas.com/
-[rom-rb]: https://rom-rb.org/
-
-[ep1]: https://www.rubytapas.com/2018/12/03/getting-started-with-rom-rb/
-[ep2]: https://www.rubytapas.com/2018/12/11/writing-changes-with-rom-rb/
-[ep3]: https://www.rubytapas.com/2018/12/19/building-queries-with-rom-rb/
-
-[ep1_script]: /episode_1.rb
-[ep2_script]: /episode_2.rb
-[ep3_script]: /episode_3.rb
-
-## Setup
-
-First, ensure you have postgres running, then create the `rubytapas_rom` database.
-
-Run `bundle` to install the gems.
-
-Then run e.g. `bundle exec episode_1.rb` to run the companion script for the episode.
-
-Some notes about these scripts:
-
-- They're designed to be run repeatedly, so with each invocation they drop and re-create their respective database tables, then fill them with the sample data.
-- They're not intended to output anything. If you want to play around, drop some `puts` lines or debugger statements wherever you like, or give the fancy [Seeing Is Believing][seeing_is_believing] gem a go, along with an editor integration.
-
-Enjoy!
-
-[seeing_is_believing]: https://github.com/JoshCheek/seeing_is_believing
+# Benefits
+- Layers: clear layers of where tu put what. Relations at the front door, relations for query logic and structs
+as instances of records.  Ensures that persistence details don't leak out to the application.
+  - As DB grows keeps things organised.
+- Narrow fit-for-purpose API: it is our job to explicitly define methods that satisfy each of the read / persistence
+requirements of our app. Those methods have a clear place to live: the repository.
+- Focus: ROM is focused on persistence only.  Other stuff like validation, callbacks or HTTP form post handling
+are better handled in other places of the app with dedicated tools.
+  - 

@@ -10,3 +10,5 @@ gem "time_math2"
 # Lock these until rom 5.0 comes with support for later versions
 gem "dry-struct", "~> 0.4", "< 0.5.0"
 gem "dry-types", "~> 0.12", "< 0.13.0"
+
+gem 'pry', '~> 0.12.2'
